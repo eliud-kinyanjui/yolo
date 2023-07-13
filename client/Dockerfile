@@ -1,13 +1,15 @@
-FROM node:lts-alpine3.18
+FROM node:16-alpine
 
 WORKDIR /app
 
-COPY package.json package.json
+COPY . .
 
 RUN npm install
 
-COPY . .
+RUN npm run build
+
+ENV NODE_ENV production
 
 EXPOSE 3000
 
-CMD [ "npm", "start" ]
+CMD [ "npx", "serve", "build" ]
