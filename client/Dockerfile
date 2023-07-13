@@ -1,4 +1,5 @@
-FROM node:lts-alpine3.18
+#FROM node:lts-alpine3.18
+FROM node:14.19.2-slim
 
 WORKDIR /app
 
@@ -10,4 +11,6 @@ COPY . .
 
 EXPOSE 3000
 
-CMD [ "npm", "start" ]
+RUN npm run build
+
+CMD [ "serve", "-s", "build" ]
