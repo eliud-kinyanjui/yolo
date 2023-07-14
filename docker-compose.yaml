@@ -7,28 +7,36 @@ services:
     volumes:
       - mongodb_data:/data/db
     networks:
-      - mynetwork
+      - ip-network
 
   frontend:
-    build: ./client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      tags:
+        - elkingsparx/ip2-client:1.0.1
     ports:
       - 8081:80
     depends_on:
       - backend
     networks:
-      - mynetwork
+      - ip-network
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      tags:
+        - elkingsparx/ip2-backend:1.0.1
     ports:
       - 5000:5000
     depends_on:
       - mongodb
     networks:
-      - mynetwork
+      - ip-network
 
 networks:
-  mynetwork:
+  ip-network:
     driver: bridge
 
 volumes:
