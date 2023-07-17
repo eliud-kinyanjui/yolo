@@ -3,6 +3,7 @@ version: '3'
 services:
   mongodb:
     image: mongo
+    container_name: mongodb-container
     restart: always
     volumes:
       - mongodb_data:/data/db
@@ -15,6 +16,7 @@ services:
       dockerfile: Dockerfile
       tags:
         - elkingsparx/ip2-client:1.0.1
+    container_name: frontend-container
     ports:
       - 8081:80
     depends_on:
@@ -28,6 +30,7 @@ services:
       dockerfile: Dockerfile
       tags:
         - elkingsparx/ip2-backend:1.0.1
+    container_name: backend-container
     ports:
       - 5000:5000
     depends_on:
