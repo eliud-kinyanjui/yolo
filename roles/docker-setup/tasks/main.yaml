@@ -1,0 +1,10 @@
+---
+- name: Install Docker
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+    state: latest
+    update_cache: true
