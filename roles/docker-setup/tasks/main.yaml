@@ -6,8 +6,12 @@
       - ca-certificates
       - curl
       - gnupg
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
     state: latest
     update_cache: true
+  tags: os-prerequisite
 
 - name: Add Docker GPG apt Key
   apt_key:
