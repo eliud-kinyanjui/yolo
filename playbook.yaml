@@ -1,7 +1,8 @@
 ---
 - name: Deploy Yolo App using Vagrant
+  gather_facts: false
   hosts: all
-  become: true
+  become: true  
 
 - name: Setup Docker Environment
   hosts: all
@@ -9,3 +10,4 @@
   become_method: sudo
   roles:
   - docker-setup
+  tags: docker
