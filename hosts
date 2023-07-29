@@ -1,0 +1,5 @@
+[yolo]
+127.0.0.1
+
+[yolo:vars]
+ansible_ssh_port=2222
