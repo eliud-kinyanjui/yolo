@@ -1,0 +1,9 @@
+---
+# tasks file for roles/git-clone-yolo
+- name: Clone Yolo App Git repository
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ dest_folder }}"
+    version: master
+    update: yes
+  tags: git

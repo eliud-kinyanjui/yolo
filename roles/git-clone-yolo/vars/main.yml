@@ -1,0 +1,4 @@
+---
+# vars file for roles/git-clone-yolo
+repo_url: https://github.com/eliud-kinyanjui/yolo.git
+dest_folder: /home/vagrant/yolo

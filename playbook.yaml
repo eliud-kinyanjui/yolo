@@ -4,6 +4,9 @@
   hosts: all
   become: true
 
+  roles:
+    - git-clone-yolo
+
   tasks:
     - name: Check if Docker is installed
       command: docker --version
@@ -18,20 +21,6 @@
             name: docker-setup
       when: docker_check.rc != 0
       tags: docker
-    
-    - name: Clone Yolo App Git repository
-      git:
-        repo: https://github.com/eliud-kinyanjui/yolo.git
-        dest: /home/vagrant/yolo/
-        version: master
-        update: yes
-      tags: git
-    
-    # - name: Run Docker Compose
-    #   docker_compose:
-    #     project_src: /home/vagrant/yolo/
-    #     state: present
-    #   tags: docker-compose
 
     - name: Run Docker Compose
       command: docker compose up -d
