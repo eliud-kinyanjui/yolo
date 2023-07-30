@@ -20,3 +20,9 @@ resource "null_resource" "vagrant" {
   }
 }
 
+resource "null_resource" "ansible_provisioner" {
+  provisioner "local-exec" {
+    command     = "ansible-playbook -i ../hosts ../playbook.yaml"
+    working_dir = path.module
+  }
+}
