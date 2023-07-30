@@ -22,7 +22,7 @@ resource "null_resource" "vagrant" {
 
 resource "null_resource" "ansible_provisioner" {
   provisioner "local-exec" {
-    command     = "ansible-playbook -i ../hosts ../playbook.yaml"
+    command     = "ansible-playbook -i ../hosts ../playbook.yaml --private-key .vagrant/machines/default/virtualbox/private_key -u vagrant"
     working_dir = path.module
   }
 }
