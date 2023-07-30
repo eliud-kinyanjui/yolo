@@ -1,0 +1,7 @@
+Host vagrant
+  HostName 127.0.0.1
+  Port 2222
+  User vagrant
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile "./.vagrant/machines/default/virtualbox/private_key"
