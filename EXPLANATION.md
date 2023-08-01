@@ -127,17 +127,45 @@ end
 
 - `ansible.compatibility_mode = "2.0"` sets the compatibility mode for Ansible to version 2.0. This ensures that the Ansible playbook is executed with the appropriate settings.
 
-- `ansible.config_file = "ansible.cfg"` specifies the path to the Ansible configuration file, if any.
+- `ansible.config_file = "ansible.cfg"` specifies the path to the Ansible configuration file.
 
 - `ansible.playbook = "playbook.yaml"` sets the path to the Ansible playbook that will be executed during provisioning.
 
 In summary, this Vagrant configuration creates a virtual machine based on the "geerlingguy/ubuntu2004" box, sets up a private network with DHCP, and forwards ports 8081 and 5000 from the guest to the host. It then uses Ansible as the provisioner to run the specified Ansible playbook, "playbook.yaml," inside the virtual machine.
+
+### ansible.cfg
+- The `ansible.cfg` file is the configuration file for Ansible. It allows you to set various options and parameters that affect how Ansible operates.
+
+#### Project Usage
+
+```
+[defaults]
+inventory=hosts
+remote_user=vagrant
+private_key_file=.vagrant/machines/default/virtualbox/private_key
+host_key_checking = False
+```
+
+### hosts
+- The `hosts` file is the inventory file in Ansible. It lists the hosts and groups of hosts that Ansible should manage. 
+
+#### Project Usage
+
+```
+[yolo]
+127.0.0.1
+
+[yolo:vars]
+ansible_ssh_port=2222
+```
 
 ### Ansible Playbook
 
 An Ansible playbook is a file written in YAML format that defines a set of tasks, configurations, and steps to be executed on remote hosts. Ansible playbooks allow you to define the desired state of your infrastructure and automate the deployment and configuration of systems, applications, and services.
 
 Each playbook consists of one or more plays, and each play contains a list of tasks. A task is a single unit of work that Ansible performs on a remote host. The tasks in a playbook are executed in order, and Ansible ensures that the desired state is achieved on each host.
+
+#### Project Usage
 
 ```
 ---
@@ -170,5 +198,90 @@ Each playbook consists of one or more plays, and each play contains a list of ta
         chdir: /home/vagrant/yolo/
       tags: docker-compose
 ```
+### Roles
+
+- Roles are reusable collections of tasks, handlers, templates, and other resources that can be applied to different hosts.
 
 
+#### Role defination
+
+```
+  roles:
+    - git-clone-yolo
+```
+- Roles folder structure
+```
+├── roles
+│   ├── git-clone-yolo
+│   │   ├── vars
+│   │   ├───── main.yaml
+│   │   ├── tasks
+│   │   ├───── main.yaml
+```
+### Variables
+- In Ansible, variables are used to store and manage data that can be referenced and used across playbooks, roles, and tasks. They provide flexibility and reusability by allowing you to define values dynamically based on different conditions, input parameters, or inventory information. Ansible variables can be used for a variety of purposes, such as configuration settings, file paths, conditionals, and more.
+
+#### Variable defination
+
+```
+# vars file for roles/git-clone-yolo
+repo_url: https://github.com/eliud-kinyanjui/yolo.git
+dest_folder: /home/vagrant/yolo
+```
+
+#### Variable uage
+
+```
+# tasks file for roles/git-clone-yolo
+- name: Clone Yolo App Git repository
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ dest_folder }}"
+    version: master
+    update: yes
+  tags: git
+```
+
+
+### Blocks
+
+- A `block` is a control structure that allows you to group multiple tasks together. It's particularly useful when you want to apply conditional execution or error handling to a set of tasks as a single unit. The block helps improve playbook readability and maintainability by reducing repetitive code.
+
+
+#### Project Usage
+
+```
+  tasks:
+    - name: Check if Docker is installed
+      command: docker --version
+      ignore_errors: true
+      register: docker_check
+      tags: docker
+
+    - name: Install Docker Community Edition
+      block:
+        - name: Include Docker Setup Role
+          include_role:
+            name: docker-setup
+      when: docker_check.rc != 0
+      tags: docker
+```
+
+### Tags
+
+- Tags are used to organize tasks and control which tasks should be executed during playbook runs or when running Ansible commands. Tags provide a way to selectively run specific tasks based on the tags associated with them. This feature allows you to execute only the relevant tasks and skip others, making playbook execution more efficient and flexible.
+
+- Tags can be assigned to tasks, roles, or entire plays in an Ansible playbook. When running an Ansible command, you can specify tags to execute only the tasks that match those tags. 
+
+#### Project usage
+
+```
+- name: Run Docker Compose
+      command: docker compose up -d
+      args:
+        chdir: /home/vagrant/yolo/
+      tags: docker-compose
+
+```
+
+- To execute the above task you would run `ansible-playbook playbook.yaml --tags docker-compose` to only execute the Run Docker Compose task.
