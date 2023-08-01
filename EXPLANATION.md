@@ -91,3 +91,101 @@ volumes:
         - elkingsparx/ip2-backend:1.0.1
     container_name: backend-container
 ```
+
+# Week 6 IP 3 - Stage 2 Using TerraForm to provision a vagrant vm and run ansible playbook.
+
+Terraform is an open-source infrastructure as code (IaC) tool developed by HashiCorp. It allows you to define and provision infrastructure resources in a declarative way using a simple, human-readable configuration language. With Terraform, you can create, modify, and manage infrastructure components across various cloud providers and on-premises environments.
+
+### Terraform setup
+
+- Create a terraform folder on the root of your application
+- Create a `main.tf` file to define your desired infrustracture state. For our case we set up a Vagrant virtual machine and provisions it using Ansible.
+```
+provider "local" {}
+
+resource "local_file" "ssh_config" {
+  filename = "${path.module}/ssh_config"
+  content = <<-EOT
+    Host vagrant
+      HostName 127.0.0.1
+      Port 2222
+      User vagrant
+      StrictHostKeyChecking no
+      PasswordAuthentication no
+      IdentityFile "${path.module}/.vagrant/machines/default/virtualbox/private_key"
+  EOT
+}
+
+resource "null_resource" "vagrant" {
+  provisioner "local-exec" {
+    command = "vagrant init geerlingguy/ubuntu2004 && vagrant up"
+    working_dir = "${path.module}"
+  }
+}
+
+resource "null_resource" "ansible_provisioner" {
+  provisioner "local-exec" {
+    command     = "ansible-playbook ../playbook.yaml --private-key .vagrant/machines/default/virtualbox/private_key -u vagrant"
+    working_dir = path.module
+  }
+}
+```
+## Terraform Configuration Explanation
+
+The above Terraform configuration defines three resources using different providers: "local," "null_resource," and "local_file." Let's break down each resource:
+
+### Provider: local
+
+```hcl
+provider "local" {}
+```
+
+This block declares the "local" provider. The "local" provider allows you to execute local operations on the machine running Terraform, such as running shell commands or scripts, creating files, and more. In this configuration, it is used to execute local shell commands and create a local file.
+
+### Resource: local_file
+
+```hcl
+resource "local_file" "ssh_config" {
+  filename = "${path.module}/ssh_config"
+  content = <<-EOT
+    Host vagrant
+      HostName 127.0.0.1
+      Port 2222
+      User vagrant
+      StrictHostKeyChecking no
+      PasswordAuthentication no
+      IdentityFile "${path.module}/.vagrant/machines/default/virtualbox/private_key"
+  EOT
+}
+```
+
+This block defines a resource of type "local_file" with the name "ssh_config." The purpose of this resource is to create a local file named "ssh_config" with the specified content. The content is a multi-line string using the "EOT" (end of text) heredoc syntax, containing the configuration for an SSH connection to a Vagrant virtual machine. The "Host vagrant" section defines the configuration for SSH connectivity to the Vagrant machine.
+
+### Resource: null_resource (vagrant)
+
+```hcl
+resource "null_resource" "vagrant" {
+  provisioner "local-exec" {
+    command = "vagrant init geerlingguy/ubuntu2004 && vagrant up"
+    working_dir = "${path.module}"
+  }
+}
+```
+
+This block defines a resource of type "null_resource" with the name "vagrant." The "null_resource" is a resource that does nothing but can be used to execute provisioners. In this case, the provisioner "local-exec" is used to run the specified command locally. The command initializes a Vagrant project with the "geerlingguy/ubuntu2004" base box and then brings up the Vagrant virtual machine using the "vagrant up" command. The "working_dir" parameter specifies the working directory where the command should be executed, which is set to "${path.module}".
+
+### Resource: null_resource (ansible_provisioner)
+
+```hcl
+resource "null_resource" "ansible_provisioner" {
+  provisioner "local-exec" {
+    command     = "ansible-playbook ../playbook.yaml --private-key .vagrant/machines/default/virtualbox/private_key -u vagrant"
+    working_dir = path.module
+  }
+}
+```
+
+This block defines another resource of type "null_resource" with the name "ansible_provisioner." Similar to the previous null_resource, the provisioner "local-exec" is used to run the specified command locally. This command executes an Ansible playbook named "playbook.yaml" with specific options, including the path to the SSH private key of the Vagrant machine. The "working_dir" parameter specifies the working directory where the command should be executed, which is set to "path.module."
+
+- To initialize the terraform configuration run `terraform init`
+- After the initialization is successful you can run `terraform plan` and `terraform apply` to create or modify your infrastructure according to the defined configuration.
