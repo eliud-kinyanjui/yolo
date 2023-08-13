@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-nopass
+spec:
+  selector:
+    app: mongodb-nopass
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017

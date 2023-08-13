@@ -78,7 +78,8 @@ class ProductControl extends Component {
     }
     
     componentDidMount(){
-        axios.get('http://'+ window.location.hostname + ':5000/api/products')
+        const apiUrl = process.env.REACT_APP_BACKEND_API_URL;       
+        axios.get(apiUrl + '/api/products')
             .then(res =>{
                 console.log(res)
                 this.setState({
@@ -157,14 +158,16 @@ class ProductControl extends Component {
         //     console.log(pair[0]+ ', ' + pair[1]); 
         // }       
         // console.log(...formData)
-        axios.post('http://'+ window.location.hostname + ':5000/api/products', newProduct)
+        const apiUrl = process.env.REACT_APP_BACKEND_API_URL;  
+        axios.post(apiUrl + '/api/products', newProduct)
             .then(res => console.log(res.data))
         this.setState({
             formVisibleOnPage: false
         })
     };
     handleDeletingProduct = (id) =>{
-        axios.delete('http://'+ window.location.hostname + ':5000/api/products/'+id)
+        const apiUrl = process.env.REACT_APP_BACKEND_API_URL;  
+        axios.delete(apiUrl + '/api/products/'+id)
             .then(res => console.log(res.data))
             .catch((error) =>{
                 console.log(error)
@@ -183,8 +186,8 @@ class ProductControl extends Component {
         this.setState({selectedProduct: selectedProduct});
     }
     handleEditingProduct = (editedProduct) =>{
-
-        axios.put('http://'+ window.location.hostname + ':5000/api/products/' + this.state.selectedProduct._id, editedProduct)
+        const apiUrl = process.env.REACT_APP_BACKEND_API_URL;  
+        axios.put(apiUrl + '/api/products/' + this.state.selectedProduct._id, editedProduct)
             .then(res =>console.log(res.data))
         
         this.setState({
