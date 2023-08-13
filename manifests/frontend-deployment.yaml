@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: frontend
   labels:
-    app: backend
+    app: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: frontend
   template:
     metadata:
       labels:
-        app: backend
+        app: frontend
     spec:
       containers:
-      - name: backend
-        image: elkingsparx/ip2-backend:1.0.1
+      - name: frontend
+        image: elkingsparx/ip2-client:1.0.1
         ports:
-        - containerPort: 5000
+        - containerPort: 80
