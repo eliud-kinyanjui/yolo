@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-express
+  labels:
+    app: backend-express
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-express
+  template:
+    metadata:
+      labels:
+        app: backend-express
+    spec:
+      containers:
+      - name: backend-express
+        image: elkingsparx/ip2-backend:1.0.1
+        ports:
+        - containerPort: 5000
