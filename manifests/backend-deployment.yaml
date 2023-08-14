@@ -19,3 +19,7 @@ spec:
         image: elkingsparx/ip2-backend:1.0.2
         ports:
         - containerPort: 5000
+        livenessProbe:
+            httpGet:
+              path: /api/products
+              port: 5000

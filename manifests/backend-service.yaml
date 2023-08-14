@@ -5,8 +5,8 @@ metadata:
 spec:
   selector:
     app: backend
-  type: LoadBalancer 
+  type: NodePort
   ports:
     - protocol: TCP
-      port: 5000
+      port: 80
       targetPort: 5000
