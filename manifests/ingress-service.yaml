@@ -15,8 +15,8 @@ spec:
                 name: frontend-service
                 port:
                   number: 80
-          - path: /backend/*
-            pathType: ImplementationSpecific
+          - path: /api/products/
+            pathType: Exact
             backend:
               service:
                 name: backend-service
